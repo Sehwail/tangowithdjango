@@ -1,4 +1,4 @@
-{% extends 'rango/base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 
 {% block title %}Add Page{% endblock %}
@@ -6,7 +6,7 @@
 {% block body_block %}
         <h1>Add a Page</h1>
 
-        <form id="page_form" method="post" action="{% url 'add_page' %}">
+        <form id="page_form" method="post" action="{% url 'add_page' category.slug %}">
 
             {% csrf_token %}
             {% for hidden in form.hidden_fields %}

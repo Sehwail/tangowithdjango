@@ -1,31 +1,54 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rango.models import Category
-from rango.models import Page
-from rango.forms import CategoryForm
-from rango.forms import PageForm
-from rango.forms import UserForm, UserProfileForm
-from django.contrib.auth import authenticate, login
+from rango.models import Category,Page
+from rango.forms import CategoryForm,PageForm,UserForm,UserProfileForm
+from django.contrib.auth import authenticate, login,logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from datetime import datetime
 
 def index(request):
-    # Query the database for a list of ALL categories currently stored.
-    # Order the categories by no. likes in descending order.
-    # Retrieve the top 5 only - or all if less than 5.
-    # Place the list in our context_dict dictionary which will be passed to the template engine.
+
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
-    context_dict = {'categories': category_list,  'pages': page_list }
-    
 
-    # Render the response and send it back!
-    return render(request, 'rango/index.html', context_dict)
+    context_dict = {'categories': category_list, 'pages': page_list}
+
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+    reset_last_visit_time = False
+
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.now() - last_visit_time).seconds > 0:
+            # ...reassign the value of the cookie to +1 of what it was before...
+            visits = visits + 1
+            # ...and update the last visit cookie, too.
+            reset_last_visit_time = True
+    else:
+        # Cookie last_visit doesn't exist, so create it to the current date/time.
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = visits
+    context_dict['visits'] = visits
+
+
+    response = render(request,'rango/index.html', context_dict)
+
+    return response
 
 def about(request):
-	context_dict = {'boldmessage': "This tutorial has been done by Majd Sehwail, 2096507"}
-	return render(request, 'rango/about.html',context_dict)
+    if request.session.get('visits'):
+        count = request.session.get('visits')
+    else:
+        count = 0
+    context_dict = {'boldmessage': "This tutorial has been done by Majd Sehwail, 2096507",'visits':count}
+    return render(request,'rango/about.html',context_dict)
 
 def category(request, category_name_slug):
 
@@ -48,7 +71,7 @@ def category(request, category_name_slug):
         # We also add the category object from the database to the context dictionary.
         # We'll use this in the template to verify that the category exists.
         context_dict['category'] = category
-        context_dict['category_name_slug'] = category.slug
+        context_dict['category_name_slug'] = category_name_slug
     except Category.DoesNotExist:
         # We get here if we didn't find the specified category.
         # Don't do anything - the template displays the "no category" message for us.
@@ -110,6 +133,9 @@ def add_page(request, category_name_slug):
 
 
 def register(request):
+    if request.session.test_cookie_worked():
+        print ">>>> TEST COOKIE WORKED!"
+        request.session.delete_test_cookie()
 
     # A boolean value for telling the template whether the registration was successful.
     # Set to False initially. Code changes value to True when registration succeeds.

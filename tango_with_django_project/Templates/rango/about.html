@@ -1,7 +1,8 @@
-{% extends 'rango/base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block body_block %}
         <h1>Rango says...</h1>
         here is the about page <strong>{{ boldmessage }}</strong><br />
         <img src="{% static "images/Charmander.gif" %}" alt="Picture of Charmander" /> <!-- New line -->
+        <p> This is your {{ visits }} time visiting the page!</p>
 {% endblock %}
