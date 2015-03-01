@@ -1,8 +1,16 @@
 {% extends 'base.html' %}
+
 {% load staticfiles %}
+
+{% block title %}About{% endblock %}
+
 {% block body_block %}
-        <h1>Rango says...</h1>
-        here is the about page <strong>{{ boldmessage }}</strong><br />
-        <img src="{% static "images/Charmander.gif" %}" alt="Picture of Charmander" /> <!-- New line -->
-        <p> This is your {{ visits }} time visiting the page!</p>
+    <div class="page-header">
+                <h1>About</h1>
+            </div>
+            
+            <p>{{boldmessage}}</p>
+
+            <img  width="200" height="200" src="{% static "images/rango.jpg" %}" alt="Picture of Rango" /> <!-- New line -->
+            <p> You hjave visited this page {{visits}} times </p>
 {% endblock %}
