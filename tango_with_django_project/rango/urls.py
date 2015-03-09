@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 from rango import views
+from registration.backends.simple.views import RegistrationView
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
@@ -12,5 +13,8 @@ urlpatterns = patterns('',
     ##url(r'^login/$', views.user_login, name='login'),
     url(r'^restricted/$', views.restricted, name='restricted'),
     url(r'^search/', views.search, name='search'),
+    url(r'^goto/$', views.track_url, name='goto'),
+    url(r'^add_profile/', views.register_profile, name='add_profile'),
+    url(r'^profile/', views.profile, name='profile'),
     ##url(r'^logout/$', views.user_logout, name='logout'),
     )

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Register Profile{% endblock %}
+
+{% block body_block %}
+        <div class="page-header">
+        	<h1>{{ user.username }}</h1>
+       </div>
+
+       <p>Email: {{ user.email }}</p>
+
+        	<p>Profile picture
+        	{% if userprofile.website %}
+                         <img  width="200" height="200" src="{{ userprofile.picture.url }}" alt="User image" />
+            {% else %}
+						 No profile picture provided
+			{% endif %}</p>
+
+            <p>Website:
+			{% if userprofile.website %}
+						 <a href="{{ userprofile.website }}">{{ userprofile.website }}</a>
+			{% else %}
+						 No Website provided
+			{% endif %}</p>
+
+                        
+{% endblock %}
