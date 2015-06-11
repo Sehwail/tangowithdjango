@@ -202,6 +202,8 @@ def user_login(request):
         # This information is obtained from the login form.
             username = request.POST['username']
             password = request.POST['password']
+        
+
 
         # Use Django's machinery to attempt to see if the username/password
         # combination is valid - a User object is returned if it is.
